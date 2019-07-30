@@ -1,9 +1,8 @@
 export default class TagBrowserWidget {
   constructor(config) {
     this.config = config;
-
+    //use .bind because native promises change the "this" context
     this.fetchData()
-      //use .bind because native promises change the "this" context
       .then(this.setData.bind(this))
       .then(this.getElements.bind(this))
       .then(this.bindEventListeners.bind(this))
@@ -26,8 +25,10 @@ export default class TagBrowserWidget {
 
   getElements() {
     this.tagList = this.config.element.querySelectorAll('.tag-list')[0];
-
-    //find and store other elements you need
+    this.seriesList = this.config.element.querySelector('.js-series-list');
+    this.selectedSeries = this.config.element.querySelector(
+      '.js-selected-series'
+    );
   }
 
   bindEventListeners() {
