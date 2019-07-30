@@ -63,9 +63,7 @@ export default class TagBrowserWidget {
     let tags = this.getTags();
     let tagList = this.tagList;
     let fragment = document.createDocumentFragment();
-    let newTagList = createElement('ul', {
-      class: 'tag-list'
-    });
+
     let tagItems = tags.map(tag => {
       let elementTag = createElement(
         'li',
@@ -81,11 +79,11 @@ export default class TagBrowserWidget {
         )
       );
 
-      newTagList.appendChild(elementTag);
+      fragment.appendChild(elementTag);
     });
 
-    fragment.appendChild(newTagList);
-    tagList.parentNode.replaceChild(fragment, tagList);
+    $(tagList).remove('.tag');
+    tagList.appendChild(fragment);
   }
 
   render() {
