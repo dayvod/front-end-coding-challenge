@@ -1,14 +1,6 @@
-function compareStrings(a, b) {
-  if (a.toUpperCase().charCodeAt() > b.toUpperCase().charCodeAt()) {
-    return 1;
-  }
-
-  if (a.toUpperCase().charCodeAt() < b.toUpperCase().charCodeAt()) {
-    return -1;
-  }
-
-  return 0;
-}
+import compareStrings from './compareStrings.js';
+import createElement from './createElement.js';
+import setProps from './setProps.js';
 
 export default class TagBrowserWidget {
   constructor(config) {
@@ -67,29 +59,37 @@ export default class TagBrowserWidget {
     return tags.sort(compareStrings);
   }
 
-  setProps(element, props) {
-    let keys = Object.keys(props);
-    keys.forEach(key => {
-      element.setAttribute(key, props[key]);
+  renderTagList() {
+    let tags = this.getTags();
+    let tagList = this.tagList;
+    let fragment = document.createDocumentFragment();
+    let newTagList = createElement('ul', {
+      class: 'tag-list'
     });
-  }
+    let tagItems = tags.map(tag => {
+      let elementTag = createElement(
+        'li',
+        {},
+        createElement(
+          'button',
+          {
+            class: 'tag is-link',
+            'data-tag': tag,
+            type: 'button'
+          },
+          tag
+        )
+      );
 
-  createElement(tagName, props, child) {
-    let element = document.createElement(tagName);
-    setProps(element, props);
+      newTagList.appendChild(elementTag);
+    });
 
-    if (child instanceof HTMLElement) {
-      element.appendChild(child);
-    } else if (typeof child === 'string' || typeof child === 'number') {
-      element.appendChild(document.createTextNode(child));
-    } else {
-      throw new Error(`Child element is not a valid type: ${child}`);
-    }
-
-    return element;
+    fragment.appendChild(newTagList);
+    tagList.parentNode.replaceChild(fragment, tagList);
   }
 
   render() {
+    this.renderTagList();
     //render the list of tags from this.data into this.tagList
   }
 
