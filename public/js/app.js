@@ -67,7 +67,7 @@ export default class TagBrowserWidget {
     let tagItems = tags.map(tag => {
       let elementTag = createElement(
         'li',
-        {},
+        { 'data-tag': tag },
         createElement(
           'button',
           {
@@ -82,7 +82,7 @@ export default class TagBrowserWidget {
       fragment.appendChild(elementTag);
     });
 
-    $(tagList).remove('.tag');
+    $('.tag').remove();
     tagList.appendChild(fragment);
   }
 
@@ -92,7 +92,11 @@ export default class TagBrowserWidget {
   }
 
   tagListClicked(event) {
-    console.log('tag list (or child) clicked', event);
+    let tag = event.target.getAttribute('data-tag');
+    let matchedSeries = this.data.filter(item => {
+      return item.tags.includes(tag);
+    });
+    console.log(matchedSeries);
     //check to see if it was a tag that was clicked and render
     //the list of series that have the matching tags
   }
