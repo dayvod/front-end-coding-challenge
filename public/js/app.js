@@ -64,9 +64,29 @@ export default class TagBrowserWidget {
 
   getTags() {
     let tags = this.getUniqueTags(this.data);
-    console.log(tags.sort(compareStrings));
-
     return tags.sort(compareStrings);
+  }
+
+  setProps(element, props) {
+    let keys = Object.keys(props);
+    keys.forEach(key => {
+      element.setAttribute(key, props[key]);
+    });
+  }
+
+  createElement(tagName, props, child) {
+    let element = document.createElement(tagName);
+    setProps(element, props);
+
+    if (child instanceof HTMLElement) {
+      element.appendChild(child);
+    } else if (typeof child === 'string' || typeof child === 'number') {
+      element.appendChild(document.createTextNode(child));
+    } else {
+      throw new Error(`Child element is not a valid type: ${child}`);
+    }
+
+    return element;
   }
 
   render() {
