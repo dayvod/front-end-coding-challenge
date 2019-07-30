@@ -1,3 +1,15 @@
+function compareStrings(a, b) {
+  if (a.toUpperCase().charCodeAt() > b.toUpperCase().charCodeAt()) {
+    return 1;
+  }
+
+  if (a.toUpperCase().charCodeAt() < b.toUpperCase().charCodeAt()) {
+    return -1;
+  }
+
+  return 0;
+}
+
 export default class TagBrowserWidget {
   constructor(config) {
     this.config = config;
@@ -5,6 +17,7 @@ export default class TagBrowserWidget {
     this.fetchData()
       .then(this.setData.bind(this))
       .then(this.getElements.bind(this))
+      .then(this.getTags.bind(this))
       .then(this.bindEventListeners.bind(this))
       .then(this.render.bind(this));
 
@@ -35,6 +48,25 @@ export default class TagBrowserWidget {
     this.tagList.addEventListener('click', this.tagListClicked.bind(this));
 
     //bind the additional event listener for clicking on a series title
+  }
+
+  getUniqueTags(seriesList) {
+    let uniqueTags = Object.create(null);
+    seriesList.forEach(series => {
+      let { tags } = series;
+      tags.forEach(tag => {
+        uniqueTags[tag] = tag;
+      });
+    });
+
+    return Object.keys(uniqueTags);
+  }
+
+  getTags() {
+    let tags = this.getUniqueTags(this.data);
+    console.log(tags.sort(compareStrings));
+
+    return tags.sort(compareStrings);
   }
 
   render() {
