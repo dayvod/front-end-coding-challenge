@@ -36,7 +36,10 @@ export default class TagBrowserWidget {
 
   bindEventListeners() {
     this.tagList.addEventListener('click', this.tagListClicked.bind(this));
-
+    this.seriesList.addEventListener(
+      'click',
+      this.seriesListClicked.bind(this)
+    );
     //bind the additional event listener for clicking on a series title
   }
 
@@ -89,13 +92,17 @@ export default class TagBrowserWidget {
     //render the list of tags from this.data into this.tagList
   }
 
-  renderSeriesList(series) {
+  renderSeriesList() {
     let seriesList = this.seriesList;
     let fragment = document.createDocumentFragment();
 
-    series.forEach(item => {
+    this.matchedSeries.forEach(item => {
       fragment.appendChild(
-        createElement('li', {}, createElement('a', {}, item.title))
+        createElement(
+          'li',
+          {},
+          createElement('a', { 'data-id': item.id }, item.title)
+        )
       );
     });
 
@@ -103,14 +110,58 @@ export default class TagBrowserWidget {
     seriesList.appendChild(fragment);
   }
 
+  renderSelectedItem(id) {
+    let selectedItem = this.matchedSeries.find(series => id === series.id);
+    let fragment = document.createDocumentFragment();
+    // content
+    let content = createElement('div', { class: 'content' }, [
+      createElement('h3', { class: 'subtitle' }, selectedItem.title),
+      createElement('img', { src: selectedItem.thumbnail }),
+      createElement('p', {}, selectedItem.description)
+    ]);
+    let ul = createElement('ul', {}, [
+      createElement('li', {}, [
+        createElement('strong', {}, 'Rating'),
+        createElement('span', {}, selectedItem.rating)
+      ]),
+      createElement('li', {}, [
+        createElement('strong', {}, 'Native Language Title: '),
+        createElement('span', {}, selectedItem.nativeLanguageTitle)
+      ]),
+      createElement('li', {}, [
+        createElement('strong', {}, 'Source Country: '),
+        createElement('span', {}, selectedItem.sourceCountry)
+      ]),
+      createElement('li', {}, [
+        createElement('strong', {}, 'Type: '),
+        createElement('span', {}, selectedItem.type)
+      ]),
+      createElement('li', {}, [
+        createElement('strong', {}, 'Episodes: '),
+        createElement('span', {}, selectedItem.episodes)
+      ])
+    ]);
+
+    fragment.appendChild(content);
+    fragment.appendChild(ul);
+    $(this.selectedSeries).empty();
+    this.selectedSeries.appendChild(fragment);
+  }
+
+  seriesListClicked(event) {
+    let id = parseInt(event.target.getAttribute('data-id'), 10);
+    this.renderSelectedItem(id);
+    console.log(event.target);
+  }
+
   tagListClicked(event) {
     let tag = event.target.getAttribute('data-tag');
-    let matchedSeries = this.data.filter(item => {
+    this.matchedSeries = this.data.filter(item => {
       return item.tags.includes(tag);
     });
 
-    this.renderSeriesList(matchedSeries);
-    console.log(matchedSeries);
+    this.renderSeriesList(this.matchedSeries);
+    console.log(this.matchedSeries);
     //check to see if it was a tag that was clicked and render
     //the list of series that have the matching tags
   }
