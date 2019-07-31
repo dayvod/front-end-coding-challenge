@@ -30,10 +30,8 @@ export default class TagBrowserWidget {
 
   getElements() {
     this.tagList = this.config.element.querySelectorAll('.tag-list')[0];
-    this.seriesList = this.config.element.querySelector('.js-series-list');
-    this.selectedSeries = this.config.element.querySelector(
-      '.js-selected-series'
-    );
+    this.seriesList = this.config.element.querySelector('.matching-items-list');
+    this.selectedSeries = this.config.element.querySelector('.selected-item');
   }
 
   bindEventListeners() {
@@ -82,7 +80,7 @@ export default class TagBrowserWidget {
       fragment.appendChild(elementTag);
     });
 
-    $('.tag').remove();
+    $(tagList).empty();
     tagList.appendChild(fragment);
   }
 
@@ -91,11 +89,27 @@ export default class TagBrowserWidget {
     //render the list of tags from this.data into this.tagList
   }
 
+  renderSeriesList(series) {
+    let seriesList = this.seriesList;
+    let fragment = document.createDocumentFragment();
+
+    series.forEach(item => {
+      fragment.appendChild(
+        createElement('li', {}, createElement('a', {}, item.title))
+      );
+    });
+
+    $(seriesList).empty();
+    seriesList.appendChild(fragment);
+  }
+
   tagListClicked(event) {
     let tag = event.target.getAttribute('data-tag');
     let matchedSeries = this.data.filter(item => {
       return item.tags.includes(tag);
     });
+
+    this.renderSeriesList(matchedSeries);
     console.log(matchedSeries);
     //check to see if it was a tag that was clicked and render
     //the list of series that have the matching tags
