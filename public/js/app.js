@@ -32,6 +32,7 @@ export default class TagBrowserWidget {
     this.tagList = this.config.element.querySelectorAll('.tag-list')[0];
     this.seriesList = this.config.element.querySelector('.matching-items-list');
     this.selectedSeries = this.config.element.querySelector('.selected-item');
+    this.clearButton = this.config.element.querySelector('.clear-button');
   }
 
   bindEventListeners() {
@@ -40,6 +41,7 @@ export default class TagBrowserWidget {
       'click',
       this.seriesListClicked.bind(this)
     );
+    this.clearButton.addEventListener('click', this.clearWidget.bind(this));
     //bind the additional event listener for clicking on a series title
   }
 
@@ -68,7 +70,7 @@ export default class TagBrowserWidget {
     let tagItems = tags.map(tag => {
       let elementTag = createElement(
         'li',
-        { 'data-tag': tag },
+        { },
         createElement(
           'button',
           {
@@ -148,6 +150,17 @@ export default class TagBrowserWidget {
     this.selectedSeries.appendChild(fragment);
   }
 
+  renderEmptyItem() {
+    let selectedSeries = this.selectedSeries;
+    let subtitle = selectedSeries.querySelector('.subtitle');
+    let img = createElement('img', {src: 'http://via.placeholder.com/350x350'});
+
+    $(subtitle).replaceWith("<h2 class='subtitle'>No Series Selected</h2>");
+    $('.selected-item img').replaceWith(img);
+    $('.selected-item p').remove();
+    $('.selected-item > ul > li > span').remove();
+  }
+
   seriesListClicked(event) {
     let id = parseInt(event.target.getAttribute('data-id'), 10);
     this.renderSelectedItem(id);
@@ -164,5 +177,12 @@ export default class TagBrowserWidget {
     console.log(this.matchedSeries);
     //check to see if it was a tag that was clicked and render
     //the list of series that have the matching tags
+  }
+
+  clearWidget() {
+    // $(this.selectedSeries).empty();
+    $(this.seriesList).empty();
+    this.matchedSeries = [];
+    this.renderEmptyItem();
   }
 }
