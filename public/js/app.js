@@ -70,7 +70,7 @@ export default class TagBrowserWidget {
     let tagItems = tags.map(tag => {
       let elementTag = createElement(
         'li',
-        { },
+        {},
         createElement(
           'button',
           {
@@ -91,7 +91,12 @@ export default class TagBrowserWidget {
 
   render() {
     this.renderTagList();
-    //render the list of tags from this.data into this.tagList
+    this.renderEmptyItem();
+    $(this.seriesList.parentNode.firstElementChild).html('No Tag Selected');
+    $(this.selectedSeries.querySelector('.subtitle')).html(
+      'No Series Selected'
+    );
+    $(this.seriesList).empty();
   }
 
   renderSeriesList() {
@@ -153,7 +158,9 @@ export default class TagBrowserWidget {
   renderEmptyItem() {
     let selectedSeries = this.selectedSeries;
     let subtitle = selectedSeries.querySelector('.subtitle');
-    let img = createElement('img', {src: 'http://via.placeholder.com/350x350'});
+    let img = createElement('img', {
+      src: 'http://via.placeholder.com/350x350'
+    });
 
     $(subtitle).replaceWith("<h2 class='subtitle'>No Series Selected</h2>");
     $('.selected-item img').replaceWith(img);
